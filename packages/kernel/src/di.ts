@@ -102,6 +102,9 @@ if (!('getOwnMetadata' in Reflect)) {
     return function(target: Function): void {
       (target as IIndexable)[metadataKey] = metadataValue;
     };
+  } as (metadataKey: any, metadataValue: any) => {
+    (target: Function): void;
+    (target: Object, propertyKey: string | symbol): void;
   };
 }
 // tslint:enable:no-any ban-types
@@ -453,13 +456,13 @@ export class Resolver implements IResolver, IRegistration {
 
 /** @internal */
 export interface IInvoker {
-  invoke(container: IContainer, fn: Constructable, dependencies: Key<unknown>[]): Constructable;
+  invoke(container: IContainer, fn: Constructable, dependencies: Key<unknown>[]): InstanceType<Constructable>;
   invokeWithDynamicDependencies(
     container: IContainer,
     fn: Constructable,
     staticDependencies: Key<unknown>[],
     dynamicDependencies: Key<unknown>[]
-  ): Constructable;
+  ): InstanceType<Constructable>;
 }
 
 /** @internal */
@@ -482,7 +485,7 @@ export class Factory implements IFactory {
     return new Factory(Type, invoker, dependencies);
   }
 
-  public construct(container: IContainer, dynamicDependencies?: Key<unknown>[]): Constructable {
+  public construct(container: IContainer, dynamicDependencies?: Key<unknown>[]): InstanceType<Constructable> {
     if (Tracer.enabled) { Tracer.enter('Factory', 'construct', [this.Type, ...slice.call(arguments)]); }
     const transformers = this.transformers;
     let instance = dynamicDependencies !== undefined
@@ -575,7 +578,7 @@ export class Container implements IContainer {
       if (isRegistry(current)) {
         current.register(this);
       } else if (isClass(current)) {
-        Registration.singleton(current, current).register(this);
+        Registration.singleton(current, current as Constructable).register(this);
       } else {
         keys = Object.keys(current);
         j = 0;
@@ -841,49 +844,49 @@ function buildAllResponse(resolver: IResolver, handler: IContainer, requestor: I
 /** @internal */
 export const classInvokers: IInvoker[] = [
   {
-    invoke<T extends Constructable, K>(container: IContainer, Type: T): K {
-      return new Type();
+    invoke<T extends Constructable>(container: IContainer, Type: T): InstanceType<T> {
+      return new Type() as InstanceType<T>;
     },
     invokeWithDynamicDependencies
   },
   {
-    invoke<T extends Constructable, K>(container: IContainer, Type: T, deps: Key<unknown>[]): K {
-      return new Type(container.get(deps[0]));
+    invoke<T extends Constructable>(container: IContainer, Type: T, deps: Key<unknown>[]): InstanceType<T> {
+      return new Type(container.get(deps[0])) as InstanceType<T>;
     },
     invokeWithDynamicDependencies
   },
   {
-    invoke<T extends Constructable, K>(container: IContainer, Type: T, deps: Key<unknown>[]): K {
-      return new Type(container.get(deps[0]), container.get(deps[1]));
+    invoke<T extends Constructable>(container: IContainer, Type: T, deps: Key<unknown>[]): InstanceType<T> {
+      return new Type(container.get(deps[0]), container.get(deps[1])) as InstanceType<T>;
     },
     invokeWithDynamicDependencies
   },
   {
-    invoke<T extends Constructable, K>(container: IContainer, Type: T, deps: Key<unknown>[]): K {
-      return new Type(container.get(deps[0]), container.get(deps[1]), container.get(deps[2]));
+    invoke<T extends Constructable>(container: IContainer, Type: T, deps: Key<unknown>[]): InstanceType<T> {
+      return new Type(container.get(deps[0]), container.get(deps[1]), container.get(deps[2])) as InstanceType<T>;
     },
     invokeWithDynamicDependencies
   },
   {
-    invoke<T extends Constructable, K>(container: IContainer, Type: T, deps: Key<unknown>[]): K {
+    invoke<T extends Constructable>(container: IContainer, Type: T, deps: Key<unknown>[]): InstanceType<T> {
       return new Type(
         container.get(deps[0]),
         container.get(deps[1]),
         container.get(deps[2]),
         container.get(deps[3])
-      );
+      ) as InstanceType<T>;
     },
     invokeWithDynamicDependencies
   },
   {
-    invoke<T extends Constructable, K>(container: IContainer, Type: T, deps: Key<unknown>[]): K {
+    invoke<T extends Constructable>(container: IContainer, Type: T, deps: Key<unknown>[]): InstanceType<T> {
       return new Type(
         container.get(deps[0]),
         container.get(deps[1]),
         container.get(deps[2]),
         container.get(deps[3]),
         container.get(deps[4])
-      );
+      ) as InstanceType<T>;
     },
     invokeWithDynamicDependencies
   }
@@ -891,17 +894,17 @@ export const classInvokers: IInvoker[] = [
 
 /** @internal */
 export const fallbackInvoker: IInvoker = {
-  invoke: invokeWithDynamicDependencies as (container: IContainer, fn: Constructable, dependencies: Key<unknown>[]) => Constructable,
+  invoke: invokeWithDynamicDependencies as (container: IContainer, fn: Constructable, dependencies: Key<unknown>[]) => InstanceType<Constructable>,
   invokeWithDynamicDependencies
 };
 
 /** @internal */
-export function invokeWithDynamicDependencies<T extends Constructable, K>(
+export function invokeWithDynamicDependencies<T extends Constructable>(
   container: IContainer,
   Type: T,
   staticDependencies: Key<unknown>[],
   dynamicDependencies: Key<unknown>[]
-): K {
+): InstanceType<T> {
   let i = staticDependencies.length;
   let args: Key<unknown>[] = new Array(i);
   let lookup: Key<unknown>;
