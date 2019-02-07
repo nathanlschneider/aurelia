@@ -127,7 +127,7 @@ function define<N extends INode = INode, T extends Constructable = Constructable
 function define<N extends INode = INode, T extends Constructable = Constructable>(this: ICustomAttributeResource, nameOrDefinition: string | IAttributeDefinition, ctor: T): T & ICustomAttributeType<N, T>;
 function define<N extends INode = INode, T extends Constructable = Constructable>(this: ICustomAttributeResource, nameOrDefinition: string | IAttributeDefinition, ctor: T): T & ICustomAttributeType<N, T> {
   const Type = ctor as T & Writable<ICustomAttributeType>;
-  const description = createCustomAttributeDescription(typeof nameOrDefinition === 'string' ? { name: nameOrDefinition } : nameOrDefinition, Type);
+  const description = createCustomAttributeDescription(typeof nameOrDefinition === 'string' ? { name: nameOrDefinition } : nameOrDefinition, Type as T & ICustomAttributeType);
   const proto: Writable<ICustomAttribute> = Type.prototype;
 
   Type.kind = CustomAttributeResource;
@@ -181,7 +181,7 @@ function define<N extends INode = INode, T extends Constructable = Constructable
     proto.$nextDetached = null;
   }
 
-  return Type as ICustomAttributeType & T;
+  return Type as T & ICustomAttributeType<N, T>;
 }
 
 export const CustomAttributeResource = {

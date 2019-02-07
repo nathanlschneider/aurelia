@@ -404,7 +404,7 @@ export class NodeSequenceFactory implements NodeSequenceFactory {
   private readonly dom: IDOM;
   private readonly deepClone: boolean;
   private readonly node: Node;
-  private readonly Type: Constructable;
+  private readonly Type: Constructable<INodeSequence>;
 
   constructor(dom: IDOM, markupOrNode: string | Node) {
     this.dom = dom;

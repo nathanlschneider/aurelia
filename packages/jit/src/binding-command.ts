@@ -69,7 +69,7 @@ function define<T extends Constructable>(this: IBindingCommandResource, nameOrDe
   Type.description = description;
   Type.register = register;
 
-  return Type;
+  return Type as T & IBindingCommandType;
 }
 
 export const BindingCommandResource: IBindingCommandResource = {

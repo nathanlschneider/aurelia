@@ -58,7 +58,7 @@ function define<T extends Constructable = Constructable>(this: IBindingBehaviorR
   Type.description = description;
   Type.register = register;
 
-  return Type;
+  return Type as T & IBindingBehaviorType<T>;
 }
 
 export const BindingBehaviorResource = {

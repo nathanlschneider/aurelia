@@ -66,8 +66,8 @@ export interface IDisposable {
 }
 
 export type Constructable<T = {}> = {
-  // tslint:disable-next-line:no-any no-useless-intersection callable-types
-  new(...args: unknown[]): T & any; // this is a "hack" to stop typescript from nagging about the type parameter T being unused (the parameter may be used for type inference)
+  // tslint:disable-next-line:callable-types
+  new(...args: unknown[]): T;
 };
 
 export type Class<T, C = IIndexable> = C & {
@@ -88,7 +88,7 @@ export type InterfaceSymbol<T = unknown> = (target: Injectable<T>, property: str
 
 export type InjectArray = ReadonlyArray<InterfaceSymbol | Constructable | string>;
 
-export type Injectable<T = {}> = Constructable<T> & { inject?: (InterfaceSymbol | Constructable)[] };
+export type Injectable<T = {}> = Class<T> & { inject?: (InterfaceSymbol | Constructable)[] };
 
 export type IIndexable<T extends object = object> = T & { [key: string]: unknown };
 

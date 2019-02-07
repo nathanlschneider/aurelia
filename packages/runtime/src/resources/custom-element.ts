@@ -191,7 +191,7 @@ function define<N extends INode = INode, T extends Constructable = Constructable
     proto.$nextDetached = null;
   }
 
-  return Type as ICustomElementType & T;
+  return Type as T & ICustomElementType<N, T>;
 }
 
 export const CustomElementResource = {
