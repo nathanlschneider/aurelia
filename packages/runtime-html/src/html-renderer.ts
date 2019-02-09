@@ -1,4 +1,4 @@
-import { InterfaceSymbol, IRegistry, Tracer } from '@aurelia/kernel';
+import { InjectArray, InterfaceSymbol, IRegistry, Tracer } from '@aurelia/kernel';
 import {
   addBinding,
   Binding,
@@ -31,7 +31,7 @@ const slice = Array.prototype.slice;
 @instructionRenderer(HTMLTargetedInstructionType.textBinding)
 /** @internal */
 export class TextBindingRenderer implements IInstructionRenderer {
-  public static readonly inject: ReadonlyArray<InterfaceSymbol> = [IExpressionParser, IObserverLocator];
+  public static readonly inject: InjectArray = [IExpressionParser, IObserverLocator];
   public static readonly register: IRegistry['register'];
 
   private readonly parser: IExpressionParser;

@@ -1,4 +1,4 @@
-import { IContainer, InterfaceSymbol, Reporter } from '@aurelia/kernel';
+import { IContainer, InjectArray, Reporter } from '@aurelia/kernel';
 import { Aurelia, ICustomElementType, IRenderContext } from '@aurelia/runtime';
 import { HistoryBrowser, IHistoryOptions, INavigationInstruction } from './history-browser';
 import { AnchorEventInfo, LinkHandler } from './link-handler';
@@ -47,7 +47,7 @@ export interface IRouteSeparators {
 }
 
 export class Router {
-  public static readonly inject: ReadonlyArray<InterfaceSymbol> = [IContainer];
+  public static readonly inject: InjectArray = [IContainer];
 
   public rootScope: Scope;
   public scopes: Scope[] = [];
